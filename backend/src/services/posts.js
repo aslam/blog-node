@@ -1,7 +1,7 @@
 import { Post } from '../db/models/post.js'
 
-export async function createPost({ title, author, contents, tags }) {
-  const post = new Post({ title, author, contents, tags })
+export async function createPost(userId, { title, contents, tags }) {
+  const post = new Post({ title, author: userId, contents, tags })
   return await post.save()
 }
 
@@ -28,14 +28,14 @@ export async function getPostById(id) {
   return await Post.findById(id)
 }
 
-export async function updatePost(postId, { title, author, contents, tags }) {
+export async function updatePost(postId, userId, { title, contents, tags }) {
   return await Post.findOneAndUpdate(
-    { _id: postId },
-    { $set: { title, author, contents, tags } },
+    { _id: postId, author: userId },
+    { $set: { title, contents, tags } },
     { new: true },
   )
 }
 
-export async function deletePost(postId) {
-  return await Post.deleteOne({ _id: postId })
+export async function deletePost(postId, userId) {
+  return await Post.deleteOne({ _id: postId, author: userId })
 }
